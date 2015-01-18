@@ -111,7 +111,9 @@ $(function() {
         $img.removeClass('active');
         $win.off('mousemove');
         $win.off('click');
-        ondragged && ondragged($img);
+        if (ondragged) {
+          ondragged($img);
+        }
       });
     });
   }
@@ -131,10 +133,7 @@ $(function() {
     tpos.right = tpos.left + $target.width();
     tpos.bottom = tpos.top + $target.height();
 
-    if  (cx >= tpos.left 
-      && cx <= tpos.right
-      && cy >= tpos.top
-      && cy <= tpos.bottom ) {
+    if  (cx >= tpos.left && cx <= tpos.right && cy >= tpos.top && cy <= tpos.bottom ) {
       // flower is on target
       disableDrag($img);
       $img.css({
@@ -164,10 +163,7 @@ $(function() {
     tpos.right = tpos.left + $target.width();
     tpos.bottom = tpos.top + $target.height();
 
-    if  (cx >= tpos.left 
-      && cx <= tpos.right
-      && cy >= tpos.top
-      && cy <= tpos.bottom ) {
+    if  (cx >= tpos.left && cx <= tpos.right && cy >= tpos.top && cy <= tpos.bottom ) {
       // ladybug is on target
       disableDrag($img);
       $img.css({
@@ -178,7 +174,7 @@ $(function() {
         // alert('well done');
         enableDrag($('#ladybug'+(ladybugIndex+1)), ladybugDragged);
       } else {
-        alert('all done!');
+        // alert('all done!');
       }
     } else {
       // target missed
