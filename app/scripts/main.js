@@ -5,7 +5,24 @@ $(function() {
     $flower = $('.flower'),
     $ladybug = $('.ladybug'),
     numFlowers = $flower.size(),
-    numLadybugs = $ladybug.size();
+    numLadybugs = $ladybug.size(),
+    audio,
+    AUDIO_OK = 'sound/bonus.wav',
+    AUDIO_NOK = 'sound/crash.wav',
+    AUDIO_GOOD = 'sound/good.ogg',
+    AUDIO_NUM = 'sound/U003_.ogg';
+
+  if (Audio) {
+    audio = new Audio();
+  }
+
+  function play(sound) {
+    if (!audio) {
+      return;
+    }
+    audio.src = sound;
+    audio.play();
+  }
 
   // $win.on('resize', updateSize);
 
@@ -94,6 +111,8 @@ $(function() {
       $img.addClass('active');
       curDragImg = $img;
       e.stopPropagation();
+      var index = $img.attr('id').replace(/[^\d]*/,'');
+      play(AUDIO_NUM.replace('_', index));
 
       $win.on('mousemove', function(e) {
         //move
@@ -141,14 +160,15 @@ $(function() {
         left: ((tpos.right + tpos.left)/2 - $img.width()/2)+'px'
       });
       if (flowerIndex < numFlowers) {
-        // alert('well done');
+        play(AUDIO_OK);
         enableDrag($('#flower'+(flowerIndex+1)), flowerDragged);
       } else {
-        // alert('all flowers done, show bugs!');
+        play(AUDIO_GOOD);
         placeLadyBugs();
       }
     } else {
       // target missed
+      play(AUDIO_NOK);
       $img.css($img.data('origPos'));
     }
   }
@@ -171,13 +191,14 @@ $(function() {
         left: ((tpos.right + tpos.left)/2 - $img.width()/2)+'px'
       });
       if (ladybugIndex < numLadybugs) {
-        // alert('well done');
+        play(AUDIO_OK);
         enableDrag($('#ladybug'+(ladybugIndex+1)), ladybugDragged);
       } else {
-        // alert('all done!');
+        play(AUDIO_GOOD);
       }
     } else {
       // target missed
+      play(AUDIO_NOK);
       $img.css($img.data('origPos'));
     }
   }
