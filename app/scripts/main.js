@@ -1,85 +1,189 @@
 $(function() {
   'use strict';
-  var $win = $(window), width, height, curDragImg;
+  var $win = $(window),
+    $targets = $('.targets'),
+    $flower = $('.flower'),
+    $ladybug = $('.ladybug'),
+    numFlowers = $flower.size(),
+    numLadybugs = $ladybug.size();
 
-  function updateSize() {
-    width = $win.width();
-    height = $win.height(); 
-  }
-  updateSize();
-  $win.on('resize', updateSize);
+  // $win.on('resize', updateSize);
 
   function init() {
-    $('img').each(function() {
-      // place
-      var $img = $(this),
-        w = $img.width(),
-        h = $img.height(),
-        t = Math.floor(Math.random()*(height - h)),
-        l = Math.floor(Math.random()*(width - w));
-      $img.css({
-        top: t+'px',
-        left: l+'px'
-      });
-
-      // drag
-      $img.on('click', function(e) {
-        // start drag
-        var prevX, prevY;
-        if ($img === curDragImg) {
-          return;
-        }
-        prevX = e.pageX;
-        prevY = e.pageY;
-        $img.addClass('active');
-        curDragImg = $img;
-        e.stopPropagation();
-
-        $win.on('mousemove', function(e) {
-          //move
-          l += e.pageX - prevX;
-          t += e.pageY - prevY;
-          prevX = e.pageX;
-          prevY = e.pageY;
-          $img.css({
-            top: t+'px',
-            left: l+'px'
-          });
-        }); 
-        $win.on('click', function() {
-          //finish
-          curDragImg = null;
-          $img.removeClass('active');
-          $win.off('mousemove');
-          $win.off('click');
-          if ($img.hasClass('flower')) {
-            checkFlowers();
-          } else {
-            checkLadyBugs();
-          }
-        });
-      });
-    });
+    placeFlowers();
   }
   init();
 
-  function checkFlowers() {
-    var left, prevleft, ordered = true;
-    for(var i=0; i<5; i++) {
-      left = parseInt($('.flower'+(i+1)).css('left'), 10);
-      if (prevleft !== undefined && left <= prevleft) {
-        ordered = false;
-        break;
+  function placeFlowers() {
+    var center = {
+      x: $win.width()/2,
+      y: ($win.height() - $targets.height())/2
+    };
+    var $flower1 = $('#flower1'),
+      flowerW = $flower1.width(),
+      flowerH = $flower1.height(),
+      flowerR = Math.max(flowerW, flowerH)/2;
+    var radius = flowerR/Math.sin(Math.PI/numFlowers);
+    var angles = [], angle = Math.PI/2, stepAngle = 2*Math.PI/numFlowers;
+    var i;
+    for(i=0; i<numFlowers; i++) {
+      angles[i] = angle;
+      angle += stepAngle;
+    }
+    // shake
+    var i1, i2, tmp;
+    for(i=0; i<50; i++) {
+      i1 = Math.floor(Math.random()*numFlowers);
+      i2 = Math.floor(Math.random()*numFlowers);
+      tmp = angles[i2];
+      angles[i2] = angles[i1];
+      angles[i1] = tmp;
+    }
+    $flower.each(function(index) {
+      var origPos = {
+        top: (center.y - Math.sin(angles[index])*radius - flowerH/2)+'px',
+        left: (center.x + Math.cos(angles[index])*radius - flowerW/2)+'px'
+      };
+      $(this).css(origPos).data('origPos', origPos);
+    });
+    enableDrag($flower1, flowerDragged);
+  }
+
+  function placeLadyBugs() {
+    var cy = $targets.height()/2;
+    var $ladybug1 = $('#ladybug1'),
+      ladybugW = $ladybug1.width(),
+      ladybugH = $ladybug1.height();
+    var cxs = [], stepcx = $win.width()/numLadybugs, cx = stepcx/2;
+    var i;
+    for(i=0; i<numLadybugs; i++) {
+      cxs[i] = cx;
+      cx += stepcx;
+    }
+    // shake
+    var i1, i2, tmp;
+    for(i=0; i<50; i++) {
+      i1 = Math.floor(Math.random()*numLadybugs);
+      i2 = Math.floor(Math.random()*numLadybugs);
+      tmp = cxs[i2];
+      cxs[i2] = cxs[i1];
+      cxs[i1] = tmp;
+    }
+    $ladybug.each(function(index) {
+      var origPos = {
+        top: (cy - ladybugH/2)+'px',
+        left: (cxs[index] - ladybugW/2)+'px'
+      };
+      $(this).css(origPos).data('origPos', origPos);
+    });
+    $ladybug.css('visibility', 'visible');
+    enableDrag($ladybug1, ladybugDragged);
+  }
+
+  function enableDrag($img, ondragged) {
+    var curDragImg;
+    $img.addClass('draggable');
+    $img.on('click', function(e) {
+      // start drag
+      var prevX, prevY;
+      if ($img === curDragImg) {
+        return;
       }
-      prevleft = left;
-    }    
-    if (ordered) {
-      $('.flower').off('click');
-      $('.ladybug').css('visibility', 'visible');
+      prevX = e.pageX;
+      prevY = e.pageY;
+      $img.addClass('active');
+      curDragImg = $img;
+      e.stopPropagation();
+
+      $win.on('mousemove', function(e) {
+        //move
+        var pos = $img.position();
+        $img.css({
+          top: (pos.top + e.pageY - prevY)+'px',
+          left: (pos.left + e.pageX - prevX)+'px'
+        });
+        prevX = e.pageX;
+        prevY = e.pageY;
+      }); 
+      $win.on('click', function() {
+        //finish
+        curDragImg = null;
+        $img.removeClass('active');
+        $win.off('mousemove');
+        $win.off('click');
+        ondragged && ondragged($img);
+      });
+    });
+  }
+
+  function disableDrag($img) {
+    $img.removeClass('draggable');
+    $img.off('click');
+  }
+
+  function flowerDragged($img) {
+    var flowerIndex = +$img.attr('id').replace(/[^\d]*/,''),
+      $target = $('#target'+flowerIndex),
+      tpos = $target.offset(),
+      ipos = $img.position(),
+      cx = ipos.left + $img.width()/2,
+      cy = ipos.top + $img.height()/2;
+    tpos.right = tpos.left + $target.width();
+    tpos.bottom = tpos.top + $target.height();
+
+    if  (cx >= tpos.left 
+      && cx <= tpos.right
+      && cy >= tpos.top
+      && cy <= tpos.bottom ) {
+      // flower is on target
+      disableDrag($img);
+      $img.css({
+        top: ((tpos.bottom + tpos.top)/2 - $img.height()/2)+'px',
+        left: ((tpos.right + tpos.left)/2 - $img.width()/2)+'px'
+      });
+      if (flowerIndex < numFlowers) {
+        // alert('well done');
+        enableDrag($('#flower'+(flowerIndex+1)), flowerDragged);
+      } else {
+        // alert('all flowers done, show bugs!');
+        placeLadyBugs();
+      }
+    } else {
+      // target missed
+      $img.css($img.data('origPos'));
     }
   }
 
-  function checkLadyBugs() {
+  function ladybugDragged($img) {
+    var ladybugIndex = +$img.attr('id').replace(/[^\d]*/,''),
+      $target = $('#flower'+ladybugIndex),
+      tpos = $target.position(),
+      ipos = $img.position(),
+      cx = ipos.left + $img.width()/2,
+      cy = ipos.top + $img.height()/2;
+    tpos.right = tpos.left + $target.width();
+    tpos.bottom = tpos.top + $target.height();
 
+    if  (cx >= tpos.left 
+      && cx <= tpos.right
+      && cy >= tpos.top
+      && cy <= tpos.bottom ) {
+      // ladybug is on target
+      disableDrag($img);
+      $img.css({
+        top: ((tpos.bottom + tpos.top)/2 - $img.height()/2)+'px',
+        left: ((tpos.right + tpos.left)/2 - $img.width()/2)+'px'
+      });
+      if (ladybugIndex < numLadybugs) {
+        // alert('well done');
+        enableDrag($('#ladybug'+(ladybugIndex+1)), ladybugDragged);
+      } else {
+        alert('all done!');
+      }
+    } else {
+      // target missed
+      $img.css($img.data('origPos'));
+    }
   }
+
 });
