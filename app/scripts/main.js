@@ -10,7 +10,8 @@ $(function() {
     AUDIO_OK = 'sound/bonus.wav',
     AUDIO_NOK = 'sound/crash.wav',
     AUDIO_GOOD = 'sound/good.ogg',
-    AUDIO_NUM = 'sound/U003_.ogg';
+    AUDIO_NUM = 'sound/U003_.ogg',
+    numLadybugPlaced = 0;
 
   if (Audio) {
     audio = new Audio();
@@ -27,7 +28,10 @@ $(function() {
   // $win.on('resize', updateSize);
 
   function init() {
-    placeFlowers();
+    $('#btnstart').on('click', function() {
+      placeFlowers();
+      $('.banner').hide();
+    });
   }
   init();
 
@@ -56,13 +60,16 @@ $(function() {
       angles[i2] = angles[i1];
       angles[i1] = tmp;
     }
-    $flower.each(function(index) {
+    $flower.addClass('draggable').on('click', function() {
+      play(AUDIO_NOK);
+    }).each(function(index) {
       var origPos = {
         top: (center.y - Math.sin(angles[index])*radius - flowerH/2)+'px',
         left: (center.x + Math.cos(angles[index])*radius - flowerW/2)+'px'
       };
       $(this).css(origPos).data('origPos', origPos);
     });
+    $flower.css('visibility', 'visible');
     enableDrag($flower1, flowerDragged);
   }
 
@@ -86,20 +93,20 @@ $(function() {
       cxs[i2] = cxs[i1];
       cxs[i1] = tmp;
     }
-    $ladybug.each(function(index) {
+    $ladybug.addClass('draggable').each(function(index) {
       var origPos = {
         top: (cy - ladybugH/2)+'px',
         left: (cxs[index] - ladybugW/2)+'px'
       };
       $(this).css(origPos).data('origPos', origPos);
+      enableDrag($(this), ladybugDragged);
     });
     $ladybug.css('visibility', 'visible');
-    enableDrag($ladybug1, ladybugDragged);
   }
 
   function enableDrag($img, ondragged) {
     var curDragImg;
-    $img.addClass('draggable');
+    $img.off('click');
     $img.on('click', function(e) {
       // start drag
       var prevX, prevY;
@@ -190,9 +197,9 @@ $(function() {
         top: ((tpos.bottom + tpos.top)/2 - $img.height()/2)+'px',
         left: ((tpos.right + tpos.left)/2 - $img.width()/2)+'px'
       });
-      if (ladybugIndex < numLadybugs) {
+      numLadybugPlaced++;
+      if (numLadybugPlaced < numLadybugs) {
         play(AUDIO_OK);
-        enableDrag($('#ladybug'+(ladybugIndex+1)), ladybugDragged);
       } else {
         play(AUDIO_GOOD);
       }
