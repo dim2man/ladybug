@@ -11,7 +11,7 @@ $(function() {
     AUDIO_NOK = 'sound/crash.wav',
     AUDIO_GOOD = 'sound/good.ogg',
     AUDIO_NUM = 'sound/U003_.ogg',
-    numLadybugPlaced = 0;
+    numLadybugPlaced;
 
   if (Audio) {
     audio = new Audio();
@@ -28,7 +28,8 @@ $(function() {
   // $win.on('resize', updateSize);
 
   function init() {
-    $('#btnstart').on('click', function() {
+    $('#btnstart, #btnagain').on('click', function() {
+      numLadybugPlaced = 0;
       placeFlowers();
       $('.banner').hide();
     });
@@ -70,6 +71,8 @@ $(function() {
       $(this).css(origPos).data('origPos', origPos);
     });
     $flower.css('visibility', 'visible');
+    $ladybug.css('visibility', 'hidden');
+    $('#btnagain').css('visibility', 'hidden');
     enableDrag($flower1, flowerDragged);
   }
 
@@ -202,6 +205,7 @@ $(function() {
         play(AUDIO_OK);
       } else {
         play(AUDIO_GOOD);
+        $('#btnagain').css('visibility', 'visible');
       }
     } else {
       // target missed

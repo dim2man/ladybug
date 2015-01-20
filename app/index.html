@@ -2,7 +2,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>Игра "Божья коровка"</title>
+    <title>Божьи коровки и ромашки</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <link rel="shortcut icon" href="favicon.ico">
@@ -18,11 +18,22 @@
   <body>
 
     <div class="banner">
-      <h2>Игра "Божья коровка"</h2>
-      <ul>
-        <li>Перетащите ромашки по порядку</li>
-        <li>Потом перетащите каждую божью коровку на свой цветок</li>
-      </ul>
+      <h2>Компьютерная игра «Божьи коровки и ромашки».</h2>
+      <img src="images/game.png">
+      <h3>Цель: формировать навык количественного и порядкового счёта.</h3>
+      <h3>Дидактические задачи:</h3>
+      <ol>
+        <li>Упражнять детей в умении составлять числовой ряд по порядку до 5.</li>
+        <li>Закреплять навык порядкового счёта до 5.</li>
+        <li>Формировать умение соотносить количество предметов и цифру.</li>
+        <li>Закреплять навык количественного счёта про себя.</li>
+        <li>Закреплять знания цифр до 5.</li>
+      </ol>
+      <h3>Игровые действия:</h3>
+      <ol>
+        <li>Расположить ромашки в ряд по возрастанию.</li>
+        <li>Сосчитать точки на крыльях божьи коровок. Посадить каждую божью коровку на свою ромашку.</li>
+      </ol>
       <button id="btnstart">Начали!</button>
     </div>
 
@@ -34,17 +45,19 @@
       <div id="target5" class="target"></div>
     </div>
 
-    <img id="flower1" class="flower" src="images/flower1.png"></img>
-    <img id="flower2" class="flower" src="images/flower2.png"></img>
-    <img id="flower3" class="flower" src="images/flower3.png"></img>
-    <img id="flower4" class="flower" src="images/flower4.png"></img>
-    <img id="flower5" class="flower" src="images/flower5.png"></img>
+    <img id="flower1" class="drag flower" src="images/flower1.png"></img>
+    <img id="flower2" class="drag flower" src="images/flower2.png"></img>
+    <img id="flower3" class="drag flower" src="images/flower3.png"></img>
+    <img id="flower4" class="drag flower" src="images/flower4.png"></img>
+    <img id="flower5" class="drag flower" src="images/flower5.png"></img>
 
-    <img id="ladybug1" class="ladybug" src="images/ladybug1.png"></img>
-    <img id="ladybug2" class="ladybug" src="images/ladybug2.png"></img>
-    <img id="ladybug3" class="ladybug" src="images/ladybug3.png"></img>
-    <img id="ladybug4" class="ladybug" src="images/ladybug4.png"></img>
-    <img id="ladybug5" class="ladybug" src="images/ladybug5.png"></img>
+    <img id="ladybug1" class="drag ladybug" src="images/ladybug1.png"></img>
+    <img id="ladybug2" class="drag ladybug" src="images/ladybug2.png"></img>
+    <img id="ladybug3" class="drag ladybug" src="images/ladybug3.png"></img>
+    <img id="ladybug4" class="drag ladybug" src="images/ladybug4.png"></img>
+    <img id="ladybug5" class="drag ladybug" src="images/ladybug5.png"></img>
+
+    <button id="btnagain">Начать заново</button>
 
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
