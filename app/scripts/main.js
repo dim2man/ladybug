@@ -11,6 +11,7 @@ $(function() {
     AUDIO_NOK = 'sound/crash.wav',
     AUDIO_GOOD = 'sound/good.ogg',
     AUDIO_NUM = 'sound/U003_.ogg',
+    AUDIO_LADYBUG = 'sound/level.wav',
     numLadybugPlaced;
 
   if (Audio) {
@@ -121,8 +122,13 @@ $(function() {
       $img.addClass('active');
       curDragImg = $img;
       e.stopPropagation();
-      var index = $img.attr('id').replace(/[^\d]*/,'');
-      play(AUDIO_NUM.replace('_', index));
+      var id = $img.attr('id');
+      var index = id.replace(/[^\d]*/,'');
+      if (id.indexOf('flower') > -1) {
+        play(AUDIO_NUM.replace('_', index));
+      } else {
+        play(AUDIO_LADYBUG);
+      }
 
       $win.on('mousemove', function(e) {
         //move
