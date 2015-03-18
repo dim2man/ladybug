@@ -288,6 +288,25 @@ module.exports = function (grunt) {
         'imagemin',
         'svgmin'
       ]
+    },
+    'gh-pages': {
+        options: {
+            base: 'dist',
+            user: {
+                name: 'Grunt task',
+                email: 'no@email.even'
+            }
+        },
+        local: {
+            src: ['**']
+        },
+        travis: {
+            options: {
+                repo: 'https://' + process.env.GH_TOKEN + '@github.com/dim2man/ladybug.git',
+                silent: true
+            },
+            src: ['**']
+        }
     }
   });
 
